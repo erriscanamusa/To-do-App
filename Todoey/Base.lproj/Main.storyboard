@@ -80,8 +80,10 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Items" id="ZIA-hq-hn6">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="CvV-tR-3qd">
-                            <color key="tintColor" red="0.93725490570000003" green="0.93725490570000003" blue="0.95686274770000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="XHH-Co-9P1">
+                            <connections>
+                                <action selector="buttonPressed:" destination="KGc-wM-edz" id="a7o-mw-MHa"/>
+                            </connections>
                         </barButtonItem>
                     </navigationItem>
                 </tableViewController>
