@@ -8,8 +8,10 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
-class CategoryViewController: UITableViewController {
+
+class CategoryViewController: SwipeTableViewController {
 
     let realm = try! Realm() //init access point to realm
     
@@ -20,6 +22,8 @@ class CategoryViewController: UITableViewController {
         super.viewDidLoad()
 
         loadCategories() // load up all the categories when app starts
+        
+        tableView.separatorStyle = .none
     
     }
     
@@ -36,7 +40,7 @@ class CategoryViewController: UITableViewController {
             
             let newCategory = Category()
             newCategory.name = textField.text!
-            
+            newCategory.backgroundColor = UIColor.randomFlat.hexValue()
             self.save(category: newCategory)
         
         }
@@ -60,18 +64,20 @@ class CategoryViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
         
-        cell.textLabel?.text = categories?[indexPath.row].name ?? "No categories added yet" // same operator
+        let cell = super.tableView(tableView, cellForRowAt: indexPath) // triggers the cell
+      
+        if let category = categories?[indexPath.row] {
         
+            cell.textLabel?.text = category.name
+        
+            guard let categoryColor = UIColor(hexString: category.backgroundColor) else {fatalError()}
+            cell.backgroundColor = categoryColor
+        
+            cell.textLabel?.textColor = ContrastColorOf(categoryColor, returnFlat: true)
+        }
         return cell
     }
-    
-  
-    
-    
-    
-    
     
     //MARK: - TableView Delegate Methods
     
@@ -86,9 +92,6 @@ class CategoryViewController: UITableViewController {
             destinationVC.selectedCategory = categories?[indexPath.row] // we set the destination VC's selected category to the category that triggered the segue
         }
     }
-    
-    
-    
     //MARK: - Data Manipulation Methods
     
     
@@ -115,6 +118,19 @@ class CategoryViewController: UITableViewController {
         
     }
     
+    //MARK: - Delete Data from Swipe
     
+    override func updateModel(at indexPath: IndexPath) {
+        if let categoryForDeletion = self.categories?[indexPath.row] {
+            do{
+                try self.realm.write {
+                    self.realm.delete(categoryForDeletion)
+                }
+            } catch {
+                print("Error deleting category, \(error)")
+            }
+        }
+    }
 }
+
 
